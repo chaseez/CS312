@@ -1,0 +1,20 @@
+Explain the time and space complexity of your algorithm by showing and summing up the complexity of each subsection of your code. NOTE: to make this easy for the TAs to find, this should appear as a subsection of your report (that is,it is great to have this info in your code comments, but you should also pull it out and include it in the report proper).
+- For my implementation of Fermat's little Theorem, I start off with a loop of size k, O(n).
+- Then I pick a random number. I made a validation loop to make sure there are no duplicate numbers: Best case, O(1). Worst case, O(n)
+- Then I run the modular exponentiation function, which has a twist to handle Miller Rabin. Each recursive call keeps going until
+- the exponent become 0: O(n/2). Each time I return, outside of the base case, there is at least 1 multiplication and modulation
+- of the result: O(n^2). All of the if statements are constant time checking. So, because it takes O(n/2) to traverse the stack and at least
+- O(n^2) for each return. Fermat's little theorem takes O(n^3) for each iteration: O(n^4) in total.
+
+- For my implementation of Miller Rabin, it is the exact same as Fermat's little Theorem in time complexity. The only difference
+- in the algorithm is what I return. In the modular exponentiation function, I check for the first non-1 number and see if the number
+- is -1 % N. If it is, I pass that boolean value up the call stack and use that as a check for passing the primality test.
+
+- In terms of space complexity, there are three things to consider here. 1st is the call stack amount, which, like I mentioned
+- previously, is O(n/2). 2nd are the local variables made for each call on the stack. I use 3 separate variables each time, which
+- is not as efficient as only using 1 (z): O(1). 3rd is the list I use to contain the randomly picked numbers. This can grow
+- significantly as k grows bigger, all the way up to N-1: O(n). So, the total space complexity for both algorithms is O(n^2).
+
+Discuss the equation you used to compute the probability of correctness that appears in the output.
+- I used the (1/2) ^ k equation because Fermat's Little Theorem guarantees that if a number is composite, then at least 1/2 of the
+- possible outcomes from Fermat's Little Theorem will be composite.
