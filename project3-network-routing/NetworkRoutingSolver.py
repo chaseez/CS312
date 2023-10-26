@@ -3,40 +3,101 @@
 
 from CS312Graph import *
 import time
+from MinHeap import MinHeap
+from math import inf as INF
 
 
 class NetworkRoutingSolver:
-    def __init__( self):
+    def __init__(self):
         pass
 
-    def initializeNetwork( self, network ):
-        assert( type(network) == CS312Graph )
+    def initializeNetwork(self, network):
+        assert (type(network) == CS312Graph)
         self.network = network
 
-    def getShortestPath( self, destIndex ):
+    def getShortestPath(self, destIndex):
         self.dest = destIndex
-        # TODO: RETURN THE SHORTEST PATH FOR destIndex
-        #       INSTEAD OF THE DUMMY SET OF EDGES BELOW
-        #       IT'S JUST AN EXAMPLE OF THE FORMAT YOU'LL 
-        #       NEED TO USE
-        path_edges = []
-        total_length = 0
-        node = self.network.nodes[self.source]
-        edges_left = 3
-        while edges_left > 0:
-            edge = node.neighbors[2]
-            path_edges.append( (edge.src.loc, edge.dest.loc, '{:.0f}'.format(edge.length)) )
-            total_length += edge.length
-            node = edge.dest
-            edges_left -= 1
-        return {'cost':total_length, 'path':path_edges}
 
-    def computeShortestPaths( self, srcIndex, use_heap=False ):
+        src_node = None
+        for node in self.shortest_path:
+            if node.node_id == self.source:
+                src_node = node
+                break
+
+        curr_node = None
+        for node in self.shortest_path:
+            if node.node_id == self.dest:
+                curr_node = node
+                break
+
+        found = False
+        total_length = 0
+        path_edges = []
+
+        while not found:
+            prev, length = self.shortest_path[curr_node]
+            if total_length == 0:
+                total_length = length
+
+            for neighbor in prev.neighbors:
+                if neighbor.dest == curr_node:
+                    path_edges.append((neighbor.src.loc, neighbor.dest.loc, '{:.0f}'.format(neighbor.length)))
+                    break
+
+            if prev == src_node:
+                found = True
+            else:
+                curr_node = prev
+
+        return {'cost': total_length, 'path': path_edges}
+
+    def computeShortestPaths(self, srcIndex, use_heap=False):
         self.source = srcIndex
         t1 = time.time()
-        # TODO: RUN DIJKSTRA'S TO DETERMINE SHORTEST PATHS.
-        #       ALSO, STORE THE RESULTS FOR THE SUBSEQUENT
-        #       CALL TO getShortestPath(dest_index)
-        t2 = time.time()
-        return (t2-t1)
+        starting_node = self.network.nodes[srcIndex]
+        self.shortest_path = {}
 
+        if use_heap:
+            # Creating a list of undiscovered nodes with infinity as the weights
+            items = [(item, INF) for item in self.network.nodes]
+            heap = MinHeap(items)
+            heap.decrease_key((starting_node, 0))
+
+            # Stores next node and shortest length
+            distance = {}
+            previous = {}
+
+            while len(heap.items) > 0:
+                curr_node_tuple = heap.pop()
+
+                # neighbor has 3 members
+                # .src (source node)
+                # .dest (destination node)
+                # .length (weight)
+                for neighbor in curr_node_tuple[0].neighbors:
+
+                    if neighbor.dest not in distance:
+                        distance[neighbor.dest] = INF
+
+                    if neighbor.dest not in previous:
+                        previous[neighbor.dest] = neighbor.src
+
+                    # Comparing the current weight of the neighboring node to the new weight
+                    if distance[neighbor.dest] > curr_node_tuple[1] + neighbor.length:
+                        # Updating the total distance to that node
+                        distance[neighbor.dest] = curr_node_tuple[1] + neighbor.length
+
+                        # Updating the previous pointing node
+                        previous[neighbor.dest] = curr_node_tuple[0]
+
+                    # Update the distance in the heap
+                    heap.decrease_key((neighbor.dest, curr_node_tuple[1] + neighbor.length))
+        else:  # Put dictionary implementation here
+            pass
+
+        # shortest_path = { destination node: (previous node, TOTAL distance to node)}
+        for node, prev in previous.items():
+            self.shortest_path[node] = (prev, distance[node])
+
+        t2 = time.time()
+        return (t2 - t1)

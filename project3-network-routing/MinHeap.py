@@ -40,7 +40,6 @@ class MinHeap():
 
     def insert(self, item):
         self.items.append(item)
-        self.bubble_up(item)
 
 
     def swap_items(self, index_1, index_2):
@@ -118,7 +117,6 @@ class MinHeap():
         elif left_child_index is not None:
             if left_child_index is not None and item_weight > left_weight:
                 self.swap_items(item_index, left_child_index)
-                item_index = left_child_index
 
 
     def pop(self):
@@ -131,10 +129,17 @@ class MinHeap():
 
 
     def decrease_key(self, item):
+        found = False
         for i in range(len(self.items)):
             if self.items[i][0] == item[0]:
                 self.items[i] = item
+                found = True
+                break
+        if found: self.bubble_up(item)
 
-        self.bubble_up(item)
+    def find_node(self, node):
+        for item in self.items:
+            if node == item[0]:
+                return item
 
 

@@ -98,7 +98,7 @@ class PointLineView( QWidget ):
 # Reimplemented to allow setting source/target nodes with mouse click
     def mousePressEvent(self,e):
         scale = self.getScale()
-        self.pointclicked.emit(self.clicknode,QPointF((e.position().x()-self.width())/scale+2,(self.height()-e.position().y())/scale-1))
+        self.pointclicked.emit(self.clicknode,QPointF((e.pos().x()-self.width())/scale+2,(self.height()-e.pos().y())/scale-1))
         if self.clicknode == 'start':
             self.clicknode = 'end'
         else:
