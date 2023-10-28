@@ -1,0 +1,52 @@
+[15] Correctly implement Dijkstra’s algorithm and the functionality discussed above. Include a copy of your (well-documented) code in your submission.
+[15] Correctly implement both versions of a priority queue, one using an array with worst case O(1), O(1) and O(|V|) operations and one using a heap with worst case O(log|V|) operations. For each operation (insert, delete-min, and decrease-key) convince us (refer to your included code) that the complexity is what is required here.
+
+For the array, I used the Python dictionary, which has O(1) for insertion, decrease-key, and O(|V|) for delete-min.
+For the heap, I implemented my own algorithm for inserting at the end of the array and bubbling up, decrease key, and delete-min it is O(log|V|)
+
+
+[20] Discuss the time and space complexity of the overall Dijkstra algorithm and each of your two versions with your priority queue implementations. You must demonstrate that you really understand the complexity and which parts of your program lead to that complexity. You may do this by:
+
+# This takes O(n)
+items = [(item, INF) for item in self.network.nodes]
+heap = MinHeap(items)
+heap.decrease_key((starting_node, 0))
+# This takes O(log|V|)
+
+# This is O(n)
+while len(heap.items) > 0:
+    curr_node_tuple = heap.pop()
+
+    # neighbor has 3 members
+    # .src (source node)
+    # .dest (destination node)
+    # .length (weight)
+    for neighbor in curr_node_tuple[0].neighbors:
+
+        if neighbor.dest not in distance:
+            distance[neighbor.dest] = INF
+
+        if neighbor.dest not in previous:
+            previous[neighbor.dest] = neighbor.src
+
+        # Comparing the current weight of the neighboring node to the new weight
+        if distance[neighbor.dest] > curr_node_tuple[1] + neighbor.length:
+            # Updating the total distance to that node
+            distance[neighbor.dest] = curr_node_tuple[1] + neighbor.length
+
+            # Updating the previous pointing node
+            previous[neighbor.dest] = curr_node_tuple[0]
+
+            # Update the distance in the heap
+            # This takes O(log|V|)
+            heap.decrease_key((neighbor.dest, curr_node_tuple[1] + neighbor.length))
+
+
+
+[20] For Random seed 42 - Size 20, Random Seed 123 - Size 200 and Random Seed 312 - Size 500, submit a screenshot showing the shortest path (if one exists) for each of the three source-destination pairs, as shown in the images below.
+For Random seed 42 - Size 20, use node 7 (the left-most node) as the source and node 1 (on the bottom toward the right) as the destination, as in the first image below.
+For Random seed 123 - Size 200, use node 94 (near the upper left) as the source and node 3 (near the lower right) as the destination, as in the second image below.
+For Random seed 312 - Size 500, use node 2 (near the lower left) as the source and node 8 (near the upper right) as the destination, as in the third image below.
+
+[20] For different numbers of nodes (100, 1000, 10000, 100000, 1000000), compare the empirical time complexity for Array vs. Heap, and give your best estimate of the difference. As a sanity check, typical runtimes for 100,000 nodes is a few mintues for the array and a few seconds for the heap. For 1,000,000 nodes, run only the heap version and then estimate how long you might expect your array version to run based on your other results. For each number of nodes do at least 5 tests with different random seeds and average the results. Graph your results and also give a table of your raw data (data for each of the runs); in both graph and table, include your one estimated runtime (array implementation for 1,000,000 points). Discuss the results and give your best explanations of why they turned out as they did.
+

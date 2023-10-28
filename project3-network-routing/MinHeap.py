@@ -40,6 +40,7 @@ class MinHeap():
 
     def insert(self, item):
         self.items.append(item)
+        self.bubble_up(item)
 
 
     def swap_items(self, index_1, index_2):
