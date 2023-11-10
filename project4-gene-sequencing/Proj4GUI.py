@@ -51,7 +51,7 @@ class Proj4GUI( QMainWindow ):
 				if(j < i):
 					s = {}
 				else:
-					s = self.solver.align(sequences[i], sequences[j], banded=self.banded.isChecked(),
+					s = self.solver.align('sequences[i]', 'sequences[j]', banded=self.banded.isChecked(),
 													align_length=int(self.alignLength.text()))
 					self.table.item(i,j).setText('{}'.format(int(s['align_cost']) if s['align_cost'] \
 																					 != math.inf else s['align_cost']))
