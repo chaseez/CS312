@@ -44,9 +44,11 @@ class GeneSequencing:
 		# seq2 is on "left", thus aligning with the rows
 		# Creating a list of lists to hold the edit distance dictionaries
 
-		self.edit_distance_banded = {}
-		self.edit_distance_unbanded = [[] for i in range(len(seq2) + 1)]
-		self.edit_distance_unbanded[0].append(0)
+		if self.banded:
+			self.edit_distance_banded = {}
+		else:
+			self.edit_distance_unbanded = [[] for i in range(len(seq2) + 1)]
+			self.edit_distance_unbanded[0].append(0)
 
 		# Tie breakers are always gonna be left, top, then diagonal
 		# Incrementation Values
