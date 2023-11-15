@@ -24,9 +24,6 @@ SUB = 1
 class GeneSequencing:
 
 	def __init__( self ):
-		self.INDEL = 5
-		self.SUB = 1
-		self.MATCH = -3
 		pass
 
 # This is the method called by the GUI.  _seq1_ and _seq2_ are two sequences to be aligned, _banded_ is a boolean that tells
@@ -145,7 +142,7 @@ class GeneSequencing:
 				# Moving along the zipped axis
 				# This truncates the longer range to fit the short one
 				for i,j in zip(range(1,seq2_size), range(1,seq1_size)):
-					for banded_j in range(j - 3, j + 4): # This is the bandwidth
+					for banded_j in range(j - MAXINDELS, j + MAXINDELS + 1): # This is the bandwidth
 						if 1 <= banded_j < seq1_size: # Guard to protect against pointer out of range
 							# Also don't want to mess with the redo the work for column 0
 							self.edit_distance_banded[(i,banded_j)] = self.get_edit_distance(i, banded_j)
@@ -206,7 +203,7 @@ class GeneSequencing:
 
 		if self.banded:
 			if (i,j) in self.edit_distance_banded:
-				ed = self.edit_distance_banded[(i,j)]['ed'] + self.INDEL
+				ed = self.edit_distance_banded[(i,j)]['ed'] + INDEL
 				# Inserting one letter to sequence 2
 				sub_seq1 = self.edit_distance_banded[(i,j)]['sub_seq1'] + self.seq1[j]
 				sub_seq2 = self.edit_distance_banded[(i,j)]['sub_seq2'] + "-"
@@ -216,7 +213,7 @@ class GeneSequencing:
 				sub_seq2 = None
 		else:
 			# Inserting one letter to sequence 2
-			ed = self.edit_distance_unbanded[i][j]['ed'] + self.INDEL
+			ed = self.edit_distance_unbanded[i][j]['ed'] + INDEL
 			sub_seq1 = self.edit_distance_unbanded[i][j]['sub_seq1'] + self.seq1[j]
 			sub_seq2 = self.edit_distance_unbanded[i][j]['sub_seq2'] + "-"
 
@@ -234,7 +231,7 @@ class GeneSequencing:
 
 		if self.banded:
 			if (i, j) in self.edit_distance_banded:
-				ed = self.edit_distance_banded[(i, j)]['ed'] + self.INDEL
+				ed = self.edit_distance_banded[(i, j)]['ed'] + INDEL
 				# Inserting one letter to sequence 1
 				sub_seq1 = self.edit_distance_banded[(i, j)]['sub_seq1'] + "-"
 				sub_seq2 = self.edit_distance_banded[(i, j)]['sub_seq2'] + self.seq2[i]
@@ -244,7 +241,7 @@ class GeneSequencing:
 				sub_seq2 = None
 		else:
 			# Inserting one letter to sequence 1
-			ed = self.edit_distance_unbanded[i][j]['ed'] + self.INDEL
+			ed = self.edit_distance_unbanded[i][j]['ed'] + INDEL
 			sub_seq1 = self.edit_distance_unbanded[i][j]['sub_seq1'] + "-"
 			sub_seq2 = self.edit_distance_unbanded[i][j]['sub_seq2'] + self.seq2[i]
 
@@ -265,14 +262,14 @@ class GeneSequencing:
 		# Comparing characters at each index
 		if self.seq1[j] == self.seq2[i]:
 			if self.banded: # There will always be a diagonal
-				ed = self.edit_distance_banded[(i, j)]['ed'] + self.MATCH
+				ed = self.edit_distance_banded[(i, j)]['ed'] + MATCH
 			else:
-				ed = self.edit_distance_unbanded[i][j]['ed'] + self.MATCH
+				ed = self.edit_distance_unbanded[i][j]['ed'] + MATCH
 		else: # If the characters can be substituted
 			if self.banded: # There will always be a diagonal
-				ed = self.edit_distance_banded[(i, j)]['ed'] + self.SUB
+				ed = self.edit_distance_banded[(i, j)]['ed'] + SUB
 			else:
-				ed = self.edit_distance_unbanded[i][j]['ed'] + self.SUB
+				ed = self.edit_distance_unbanded[i][j]['ed'] + SUB
 
 		if self.banded: # There will always be a diagonal
 			sub_seq1 = self.edit_distance_banded[(i, j)]['sub_seq1'] + self.seq1[j]
