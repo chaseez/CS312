@@ -16,7 +16,7 @@ import numpy as np
 from TSPClasses import *
 import heapq
 import itertools
-
+from MinHeap import MinHeap
 
 class TSPSolver:
 	def __init__( self, gui_view ):
@@ -82,26 +82,38 @@ class TSPSolver:
 
 	def greedy( self,time_allowance=60.0 ):
 		results = {}
-		cities = self._scenario.getCities()
-		ncities = len(cities)
+		self.cities = self._scenario.getCities()
+		self.ncities = len(self.cities)
 		foundTour = False
 		count = 0
 		bssf = None
 		adjacency_matrix = np.array(self._scenario._edge_exists.copy())
 
-		adjacency_cost_matrix = self.generate_adjacency_matrix(adjacency_matrix, cities)
+		adjacency_cost_matrix = self.generate_adjacency_matrix(adjacency_matrix, self.cities)
 
-		lower_bound, reduced_cost_matrix = self.compute_lower_bound(adjacency_cost_matrix)
-
-		print(lower_bound, reduced_cost_matrix)
+		lower_bound, self.reduced_cost_matrix = self.compute_lower_bound(adjacency_cost_matrix)
 
 		start_time = time.time()
 		while not foundTour and time.time() - start_time < time_allowance:
-			# create a random permutation
-			for i in range(ncities):
+			original_reduced_cost_matrix = self.reduced_cost_matrix.copy()
+
+			for i in range(self.ncities):
 				route = []
+				self.src = self.cities[i]
+				self.src_index = i
+
+				route.append(self.src)
 				# Get a function to find the shortest path based on the adjacency matrix
-				bssf = TSPSolution(route)
+				route = self.find_cheapest_route(i, route)
+
+				self.reduced_cost_matrix = original_reduced_cost_matrix.copy()
+				if route is None:
+					continue
+
+
+				solution = TSPSolution(route)
+				if bssf is None or solution.cost < bssf.cost:
+					bssf = solution
 				count += 1
 				if bssf.cost < np.inf:
 					# Found a valid route
@@ -130,6 +142,7 @@ class TSPSolver:
 	'''
 
 	def branchAndBound( self, time_allowance=60.0 ):
+
 		pass
 
 
@@ -190,4 +203,28 @@ class TSPSolver:
 			# print(f'After reduction: {reduced_cost_matrix[:,i]}')
 
 		return (lower_bound, reduced_cost_matrix)
+
+	def find_cheapest_route(self, curr_index, route):
+		cheapest_cost = min(self.reduced_cost_matrix[curr_index, :])
+		if cheapest_cost == math.inf:
+			if len(route) == self.ncities:
+				if self.cities[curr_index].costTo(self.src) != math.inf:
+					return route
+			else:
+				return None
+
+		dest_index = np.where(self.reduced_cost_matrix[curr_index, :] == cheapest_cost)[0][0]
+
+		self.update_visited_routes(curr_index)
+
+		route.append(self.cities[dest_index])
+
+		return self.find_cheapest_route(dest_index, route)
+
+	def update_visited_routes(self, index):
+		# Block out all outbound edges
+		self.reduced_cost_matrix[index,:] = math.inf
+
+		# Block out all inbound edges
+		self.reduced_cost_matrix[:,index] = math.inf
 
