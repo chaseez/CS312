@@ -9,9 +9,12 @@ import time
 
 
 class TSPSolution:
-	def __init__( self, listOfCities):
+	def __init__( self, listOfCities, lower_bound=None, unvisited_nodes=None, curr_index=None):
 		self.route = listOfCities
-		self.cost = self._costOfRoute()
+		self.cost = 0
+		self.lower_bound = lower_bound
+		self.unvisited_nodes = unvisited_nodes
+		self.curr_index = curr_index
 
 	def _costOfRoute( self ):
 		cost = 0

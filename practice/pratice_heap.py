@@ -143,15 +143,15 @@ class MinHeap():
             if node == item[0]:
                 return item
 
-items = [(9,'alpha'), (2,'b'), (8,'c'), (1,'d')]
+items = [(9,'alpha'), (2.2,'b'), (8,'c'), (1,'d')]
 
 heap = MinHeap(items)
 
 print(heap.items)
 
 heap.insert((0,'q'))
-heap.insert((2,'q'))
-heap.insert((3,'q'))
+heap.insert((2.1,'q'))
+heap.insert((3.2,'q'))
 
 print(heap.items)
 print(heap.pop())

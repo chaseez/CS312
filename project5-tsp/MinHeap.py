@@ -1,9 +1,10 @@
 class MinHeap():
-    def __init__(self, items):
-        self.PREVIOUS = 0
-        self.WEIGHT = 1
+    def __init__(self, items, band):
+        self.PREVIOUS = 1
+        self.WEIGHT = 0
         self.LEFT = True
         self.RIGHT = False
+        self.band = band
 
         # Stores all the items in tuples (previous, weight)
         # item[0] = previous node
@@ -39,9 +40,10 @@ class MinHeap():
 
 
     def insert(self, item):
-        # TODO: Make a band for the size of the heap
         self.items.append(item)
         self.bubble_up(item)
+        if len(self.items) > self.band:
+            self.items.pop(-1)
 
 
     def swap_items(self, index_1, index_2):
