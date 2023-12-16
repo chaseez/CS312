@@ -1,0 +1,8 @@
+1. Two Sum
+For this problem, my time complexity is close to O(n logn) because each iteration I go through, I update the inner loop by i. This reduces the runtime below O(n^2) because each iteration, the inner loop length decreases by 1, until j == n-2.
+For space complexity, it comes out to O(1) because the only information I am storing is for the indexes and local variables with primitive data types
+
+1137. N-th Tribonacci Number
+For time complexity, it comes out to O(n). This is because I loop n items, adding values to my list each time, which is constant time, and sum the last 3 elements of the list.
+For space complexity, it comes out to be O(n) as well. This is because I will store at least 3 values every time and have up to n values with a handful of local variables with primitive data types
+
